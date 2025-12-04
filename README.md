@@ -21,7 +21,7 @@ A high-performance Model Context Protocol server for AI integration with Metabas
 - **Robust Error Handling**: Comprehensive error handling with structured, actionable responses
 - **Smart Caching**: Multi-layer caching with configurable TTL for improved performance
 - **Unified Commands**: `list`, `retrieve`, `search`, `execute`, and `export` tools
-- **Dual Authentication**: API key or email/password authentication
+- **Flexible Authentication**: API key, email/password, or Google SSO
 - **Large Data Export**: Export up to 1M rows in CSV, JSON, and XLSX formats
 - **Read-Only Mode**: Enabled by default to restrict execute to SELECT queries only
 
@@ -129,6 +129,21 @@ Export large datasets up to 1M rows to the configured export directory.
 Clear internal cache with granular control.
 - **Targets**: Individual model caches, list caches, or bulk operations (`all`, `all-lists`, `all-individual`)
 
+## Google SSO Authentication
+
+For Metabase instances using Google SSO, configure the following:
+
+```bash
+METABASE_URL=https://your-metabase-instance.com
+METABASE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+METABASE_GOOGLE_CLIENT_SECRET=your-client-secret  # Optional, for token refresh
+
+# Then authenticate via CLI (one-time):
+npx metabase-mcp auth login
+```
+
+See [docs/auth.md](docs/auth.md) for detailed Google SSO setup instructions.
+
 ## For Developers
 
 ### Prerequisites
@@ -185,7 +200,11 @@ Creates `metabase-mcp-{version}.mcpb` ready for GitHub Releases.
 
 **Read-Only Mode** is enabled by default (`METABASE_READ_ONLY_MODE=true`), restricting the `execute` tool to SELECT queries only. Write operations (INSERT, UPDATE, DELETE, DROP, etc.) are blocked. Set to `false` to allow write operations.
 
-**Authentication**: API key authentication is recommended over email/password for production use.
+- **API Key Authentication**: Recommended for production environments
+- **Credential Security**: Environment variable-based configuration
+- **Google SSO Tokens**: Encrypted at rest in `~/.metabase-mcp/auth.json`
+
+For detailed security best practices, see [docs/auth.md](docs/auth.md#security-best-practices).
 
 ## License
 
