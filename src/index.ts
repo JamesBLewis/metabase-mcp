@@ -65,8 +65,7 @@ async function main(): Promise<void> {
     console.log('  METABASE_API_KEY              - API key authentication');
     console.log('  METABASE_USER_EMAIL           - Email for session auth');
     console.log('  METABASE_PASSWORD             - Password for session auth');
-    console.log('  METABASE_GOOGLE_CLIENT_ID     - Google OAuth Client ID');
-    console.log('  METABASE_GOOGLE_CLIENT_SECRET - Google OAuth Client Secret (optional)');
+    console.log('  METABASE_GOOGLE_CLIENT_ID     - Google OAuth Client ID (uses PKCE)');
     return;
   }
 

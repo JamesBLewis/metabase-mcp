@@ -39,9 +39,8 @@ const envSchema = z
     METABASE_API_KEY: z.string().optional(),
     METABASE_USER_EMAIL: z.string().email().optional(),
     METABASE_PASSWORD: z.string().min(1).optional(),
-    // Google SSO configuration
+    // Google SSO configuration (uses PKCE, no client secret needed)
     METABASE_GOOGLE_CLIENT_ID: z.string().optional(),
-    METABASE_GOOGLE_CLIENT_SECRET: z.string().optional(),
     METABASE_AUTH_STORE_PATH: z
       .string()
       .default(DEFAULT_AUTH_STORE_PATH)
@@ -109,7 +108,6 @@ function validateEnvironment() {
         METABASE_USER_EMAIL: process.env.METABASE_USER_EMAIL,
         METABASE_PASSWORD: process.env.METABASE_PASSWORD,
         METABASE_GOOGLE_CLIENT_ID: process.env.METABASE_GOOGLE_CLIENT_ID,
-        METABASE_GOOGLE_CLIENT_SECRET: process.env.METABASE_GOOGLE_CLIENT_SECRET,
         METABASE_AUTH_STORE_PATH: DEFAULT_AUTH_STORE_PATH,
         METABASE_OAUTH_CALLBACK_PORT: DEFAULT_OAUTH_CALLBACK_PORT,
         NODE_ENV: 'development' as const,
@@ -117,6 +115,7 @@ function validateEnvironment() {
         CACHE_TTL_MS: 600000,
         REQUEST_TIMEOUT_MS: 600000,
         EXPORT_DIRECTORY: join(homedir(), 'Downloads', 'Metabase'),
+        METABASE_READ_ONLY_MODE: true,
       };
     }
   }
@@ -140,7 +139,6 @@ function createTestConfig() {
     METABASE_USER_EMAIL: undefined,
     METABASE_PASSWORD: undefined,
     METABASE_GOOGLE_CLIENT_ID: undefined,
-    METABASE_GOOGLE_CLIENT_SECRET: undefined,
     METABASE_AUTH_STORE_PATH: DEFAULT_AUTH_STORE_PATH,
     METABASE_OAUTH_CALLBACK_PORT: DEFAULT_OAUTH_CALLBACK_PORT,
     NODE_ENV: 'test' as const,
@@ -187,17 +185,15 @@ export function determineAuthMethod(): AuthMethod {
 
 export const authMethod: AuthMethod = determineAuthMethod();
 
-// Google SSO configuration helper
+// Google SSO configuration helper (uses PKCE, no client secret needed)
 export function getGoogleOAuthConfig() {
   if (!config.METABASE_GOOGLE_CLIENT_ID) {
     return null;
   }
   return {
     clientId: config.METABASE_GOOGLE_CLIENT_ID,
-    clientSecret: config.METABASE_GOOGLE_CLIENT_SECRET,
     redirectUri: `http://localhost:${config.METABASE_OAUTH_CALLBACK_PORT}/callback`,
     scopes: ['openid', 'email', 'profile'],
-    authStorePath: config.METABASE_AUTH_STORE_PATH,
     callbackPort: config.METABASE_OAUTH_CALLBACK_PORT,
   };
 }

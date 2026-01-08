@@ -136,7 +136,6 @@ For Metabase instances using Google SSO, configure the following:
 ```bash
 METABASE_URL=https://your-metabase-instance.com
 METABASE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-METABASE_GOOGLE_CLIENT_SECRET=your-client-secret  # Optional, for token refresh
 
 # Then authenticate via CLI (one-time):
 npx metabase-mcp auth login

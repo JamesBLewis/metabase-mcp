@@ -79,13 +79,13 @@ For organizations using Google Sign-In with Metabase. This method allows users t
 
 ### Configuration
 
+The MCP server uses PKCE (Proof Key for Code Exchange) for secure OAuth authentication,
+which means no client secret is required.
+
 ```bash
 # Required
 export METABASE_URL=https://your-metabase-instance.com
 export METABASE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-
-# Optional (enables automatic token refresh)
-export METABASE_GOOGLE_CLIENT_SECRET=your-client-secret
 
 # Optional (defaults shown)
 export METABASE_AUTH_STORE_PATH=~/.metabase-mcp/auth.json
@@ -159,14 +159,14 @@ The stored data includes:
 
 ### Token Refresh
 
-If `METABASE_GOOGLE_CLIENT_SECRET` is provided:
-- Google tokens can be refreshed automatically
-- Session can be renewed without user interaction
-- Recommended for unattended/long-running use
+With PKCE authentication:
+- Google tokens expire after 1 hour
+- Metabase session tokens last 14 days
+- When tokens expire, users must re-authenticate using `npx metabase-mcp auth login`
 
-Without the client secret:
-- Tokens cannot be refreshed
-- User must re-authenticate when session expires (typically 14 days)
+Note: PKCE is designed for public clients and does not support refresh tokens.
+This is a security feature - it means tokens cannot be silently renewed, but it
+also means no client secret needs to be stored or managed.
 
 ### CLI Commands
 

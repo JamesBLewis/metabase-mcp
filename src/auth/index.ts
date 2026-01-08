@@ -8,7 +8,6 @@ export {
   startCallbackServer,
   exchangeCodeForTokens,
   exchangeForMetabaseSession,
-  refreshGoogleTokens,
   performLogin,
   refreshSession,
   getValidSession,

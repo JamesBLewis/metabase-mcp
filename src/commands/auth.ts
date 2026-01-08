@@ -209,10 +209,7 @@ export async function handleAuthCommand(args: string[]): Promise<void> {
       console.log('  npx metabase-mcp auth logout  - Clear stored credentials');
       console.log('\nEnvironment Variables:');
       console.log('  METABASE_URL                  - Metabase instance URL (required)');
-      console.log('  METABASE_GOOGLE_CLIENT_ID     - Google OAuth Client ID');
-      console.log(
-        '  METABASE_GOOGLE_CLIENT_SECRET - Google OAuth Client Secret (optional, for refresh)'
-      );
+      console.log('  METABASE_GOOGLE_CLIENT_ID     - Google OAuth Client ID (uses PKCE)');
       process.exit(command ? 1 : 0);
   }
 }

@@ -4,14 +4,13 @@
 
 /**
  * Google OAuth tokens received after authentication
+ * Note: With PKCE flow, refresh tokens are not available
  */
 export interface GoogleTokens {
   /** Google ID token (JWT) used to authenticate with Metabase */
   idToken: string;
   /** Google access token */
   accessToken: string;
-  /** Google refresh token (if offline access was granted) */
-  refreshToken?: string;
   /** Token expiration timestamp (Unix ms) */
   expiresAt: number;
 }
@@ -48,16 +47,17 @@ export interface OAuthCallbackResult {
 
 /**
  * Google OAuth configuration
+ * Note: Uses PKCE flow, so no client secret is required
  */
 export interface GoogleOAuthConfig {
   /** Google OAuth Client ID */
   clientId: string;
-  /** Google OAuth Client Secret (required for refresh tokens) */
-  clientSecret?: string;
   /** Redirect URI for OAuth callback */
   redirectUri: string;
   /** OAuth scopes to request */
   scopes: string[];
+  /** Callback server port (extracted from redirectUri) */
+  callbackPort: number;
 }
 
 /**

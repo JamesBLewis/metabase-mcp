@@ -10,7 +10,7 @@
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { URL, URLSearchParams } from 'url';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 import config, { getGoogleOAuthConfig } from '../config.js';
 import { tokenStore } from './tokenStore.js';
 import type {
@@ -35,9 +35,26 @@ function generateState(): string {
 }
 
 /**
- * Generate the Google OAuth authorization URL
+ * Generate a PKCE code verifier (43-128 character random string)
+ * Uses base64url encoding as per RFC 7636
  */
-export function getAuthorizationUrl(): { url: string; state: string } {
+function generateCodeVerifier(): string {
+  return randomBytes(32).toString('base64url');
+}
+
+/**
+ * Generate a PKCE code challenge from the code verifier
+ * Uses S256 method: BASE64URL(SHA256(code_verifier))
+ */
+function generateCodeChallenge(codeVerifier: string): string {
+  return createHash('sha256').update(codeVerifier).digest('base64url');
+}
+
+/**
+ * Generate the Google OAuth authorization URL with PKCE
+ * Returns the URL, state (for CSRF protection), and code_verifier (for token exchange)
+ */
+export function getAuthorizationUrl(): { url: string; state: string; codeVerifier: string } {
   const oauthConfig = getGoogleOAuthConfig();
 
   if (!oauthConfig) {
@@ -45,6 +62,8 @@ export function getAuthorizationUrl(): { url: string; state: string } {
   }
 
   const state = generateState();
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = generateCodeChallenge(codeVerifier);
 
   const params = new URLSearchParams({
     client_id: oauthConfig.clientId,
@@ -52,13 +71,14 @@ export function getAuthorizationUrl(): { url: string; state: string } {
     response_type: 'code',
     scope: oauthConfig.scopes.join(' '),
     state,
-    access_type: 'offline', // Request refresh token
-    prompt: 'consent', // Force consent to get refresh token
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
   });
 
   return {
     url: `${GOOGLE_AUTH_URL}?${params.toString()}`,
     state,
+    codeVerifier,
   };
 }
 
@@ -175,9 +195,12 @@ export function startCallbackServer(
 }
 
 /**
- * Exchange authorization code for Google tokens
+ * Exchange authorization code for Google tokens using PKCE
  */
-export async function exchangeCodeForTokens(code: string): Promise<GoogleTokens> {
+export async function exchangeCodeForTokens(
+  code: string,
+  codeVerifier: string
+): Promise<GoogleTokens> {
   const oauthConfig = getGoogleOAuthConfig();
 
   if (!oauthConfig) {
@@ -189,12 +212,8 @@ export async function exchangeCodeForTokens(code: string): Promise<GoogleTokens>
     client_id: oauthConfig.clientId,
     redirect_uri: oauthConfig.redirectUri,
     grant_type: 'authorization_code',
+    code_verifier: codeVerifier,
   });
-
-  // Add client secret if available (needed for refresh tokens)
-  if (oauthConfig.clientSecret) {
-    params.set('client_secret', oauthConfig.clientSecret);
-  }
 
   const response = await fetch(GOOGLE_TOKEN_URL, {
     method: 'POST',
@@ -214,14 +233,12 @@ export async function exchangeCodeForTokens(code: string): Promise<GoogleTokens>
   const data = (await response.json()) as {
     id_token: string;
     access_token: string;
-    refresh_token?: string;
     expires_in: number;
   };
 
   return {
     idToken: data.id_token,
     accessToken: data.access_token,
-    refreshToken: data.refresh_token,
     expiresAt: Date.now() + data.expires_in * 1000,
   };
 }
@@ -308,57 +325,12 @@ export async function exchangeForMetabaseSession(idToken: string): Promise<Metab
 }
 
 /**
- * Refresh Google tokens using refresh token
- */
-export async function refreshGoogleTokens(refreshToken: string): Promise<GoogleTokens> {
-  const oauthConfig = getGoogleOAuthConfig();
-
-  if (!oauthConfig || !oauthConfig.clientSecret) {
-    throw new Error('Cannot refresh tokens: client secret not configured');
-  }
-
-  const params = new URLSearchParams({
-    refresh_token: refreshToken,
-    client_id: oauthConfig.clientId,
-    client_secret: oauthConfig.clientSecret,
-    grant_type: 'refresh_token',
-  });
-
-  const response = await fetch(GOOGLE_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: params.toString(),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      `Failed to refresh Google tokens: ${response.status} ${JSON.stringify(errorData)}`
-    );
-  }
-
-  const data = (await response.json()) as {
-    id_token: string;
-    access_token: string;
-    expires_in: number;
-  };
-
-  return {
-    idToken: data.id_token,
-    accessToken: data.access_token,
-    refreshToken, // Refresh token is not returned, keep the original
-    expiresAt: Date.now() + data.expires_in * 1000,
-  };
-}
-
-/**
  * Perform full login flow and store credentials
+ * Uses PKCE for secure token exchange without requiring a client secret
  */
 export async function performLogin(): Promise<StoredAuth> {
-  // Generate auth URL and state
-  const { url, state } = getAuthorizationUrl();
+  // Generate auth URL, state, and PKCE code verifier
+  const { url, state, codeVerifier } = getAuthorizationUrl();
 
   console.error('\nOpening browser for Google authentication...');
   console.error(`\nIf browser doesn't open, visit:\n${url}\n`);
@@ -371,9 +343,9 @@ export async function performLogin(): Promise<StoredAuth> {
   console.error('Waiting for authentication callback...');
   const { code } = await startCallbackServer(state);
 
-  // Exchange code for Google tokens
+  // Exchange code for Google tokens using PKCE
   console.error('Exchanging authorization code for tokens...');
-  const googleTokens = await exchangeCodeForTokens(code);
+  const googleTokens = await exchangeCodeForTokens(code, codeVerifier);
 
   // Exchange Google token for Metabase session
   console.error('Authenticating with Metabase...');
@@ -398,6 +370,8 @@ export async function performLogin(): Promise<StoredAuth> {
 
 /**
  * Attempt to refresh session using stored tokens
+ * Note: With PKCE, we don't get refresh tokens, so if the Google ID token
+ * is expired, the user will need to re-authenticate
  */
 export async function refreshSession(): Promise<string | null> {
   const googleTokens = await tokenStore.getGoogleTokens();
@@ -406,29 +380,14 @@ export async function refreshSession(): Promise<string | null> {
     return null;
   }
 
-  // If Google tokens are expired and we have a refresh token, refresh them
-  if (googleTokens.expiresAt < Date.now() && googleTokens.refreshToken) {
-    try {
-      const newTokens = await refreshGoogleTokens(googleTokens.refreshToken);
-      const { sessionToken, expiresAt } = await exchangeForMetabaseSession(newTokens.idToken);
-
-      // Update stored auth
-      const auth = await tokenStore.load();
-      if (auth) {
-        auth.googleTokens = newTokens;
-        auth.sessionToken = sessionToken;
-        auth.sessionExpiresAt = expiresAt || Date.now() + METABASE_SESSION_DURATION_MS;
-        await tokenStore.save(auth);
-      }
-
-      return sessionToken;
-    } catch (error) {
-      console.error('Failed to refresh session:', error);
-      return null;
-    }
+  // If Google tokens are expired, user needs to re-authenticate
+  // (PKCE flow doesn't provide refresh tokens)
+  if (googleTokens.expiresAt < Date.now()) {
+    console.error('Google tokens expired. Please run "auth login" to re-authenticate.');
+    return null;
   }
 
-  // If Google tokens are still valid, just get a new Metabase session
+  // If Google tokens are still valid, get a new Metabase session
   try {
     const { sessionToken, expiresAt } = await exchangeForMetabaseSession(googleTokens.idToken);
     await tokenStore.updateSession(sessionToken, expiresAt);
