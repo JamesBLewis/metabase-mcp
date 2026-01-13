@@ -1,6 +1,6 @@
 {
   "name": "@nelo/metabase-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "MCP server for Metabase with Google SSO authentication",
   "type": "module",
   "repository": {
