@@ -4,8 +4,10 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    setupFiles: ['./tests/envSetup.ts'],
     env: {
       NODE_ENV: 'test',
+      MAX_RESPONSE_CHARS: '10000000', // 10M chars - disable truncation in tests
     },
     coverage: {
       provider: 'v8',

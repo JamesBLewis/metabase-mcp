@@ -143,6 +143,22 @@ npx metabase-mcp auth login
 
 See [docs/auth.md](docs/auth.md) for detailed Google SSO setup instructions.
 
+## HTTP Transport Mode (Advanced)
+
+For MCP clients supporting native OAuth, the server can run in HTTP mode:
+
+```bash
+MCP_TRANSPORT=http
+MCP_HTTP_PORT=3100
+MCP_HTTP_HOST=127.0.0.1
+```
+
+This exposes an HTTP server with:
+- MCP endpoint at `/mcp` (POST/GET)
+- OAuth Protected Resource Metadata at `/.well-known/oauth-protected-resource`
+
+See [docs/auth.md](docs/auth.md#http-transport-mode-with-native-mcp-oauth) for details.
+
 ## For Developers
 
 ### Prerequisites

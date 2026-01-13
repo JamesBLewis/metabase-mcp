@@ -3,7 +3,7 @@ import {
   handleApiError,
   validatePositiveInteger,
   validateMetabaseResponse,
-  formatJson,
+  formatJsonWithLimit,
 } from '../../utils/index.js';
 import { CardExecutionParams, ExecutionResponse } from './types.js';
 
@@ -97,14 +97,17 @@ export async function executeCard(
       content: [
         {
           type: 'text',
-          text: formatJson({
-            success: true,
-            card_id: cardId,
-            row_count: finalRowCount,
-            original_row_count: originalRowCount,
-            applied_limit: rowLimit,
-            data: limitedData,
-          }),
+          text: formatJsonWithLimit(
+            {
+              success: true,
+              card_id: cardId,
+              row_count: finalRowCount,
+              original_row_count: originalRowCount,
+              applied_limit: rowLimit,
+              data: limitedData,
+            },
+            { responseType: 'execute', arrayField: 'data' }
+          ),
         },
       ],
     };

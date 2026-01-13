@@ -6,7 +6,7 @@ import {
   validateEnumValue,
   parseAndValidatePositiveInteger,
   parseAndValidateNonNegativeInteger,
-  formatJson,
+  formatJsonWithLimit,
 } from '../../utils/index.js';
 import { ValidationErrorFactory } from '../../utils/errorFactory.js';
 import {
@@ -198,7 +198,7 @@ export async function handleList(
       content: [
         {
           type: 'text',
-          text: formatJson(response),
+          text: formatJsonWithLimit(response, { responseType: 'list', arrayField: 'data' }),
         },
       ],
     };

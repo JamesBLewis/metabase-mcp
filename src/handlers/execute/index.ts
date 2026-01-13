@@ -1,10 +1,12 @@
 import { CallToolRequest } from '@modelcontextprotocol/sdk/types.js';
+import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { MetabaseApiClient } from '../../api.js';
 import { ErrorCode, McpError } from '../../types/core.js';
 import {
   validateCardParameters,
   validatePositiveInteger,
   validateRowLimit,
+  withProgress,
 } from '../../utils/index.js';
 import { executeSqlQuery } from './executeQuery.js';
 import { executeCard } from './executeCard.js';
@@ -19,6 +21,7 @@ export async function handleExecute(
   request: CallToolRequest,
   requestId: string,
   apiClient: MetabaseApiClient,
+  server: Server,
   logDebug: (message: string, data?: unknown) => void,
   logInfo: (message: string, data?: unknown) => void,
   logWarn: (message: string, data?: unknown, error?: Error) => void,
@@ -143,14 +146,8 @@ export async function handleExecute(
       rowLimit,
     };
 
-    return await executeCard(
-      cardParams,
-      requestId,
-      apiClient,
-      logDebug,
-      logInfo,
-      logWarn,
-      logError
+    return await withProgress(server, `Executing card ${cardId}`, () =>
+      executeCard(cardParams, requestId, apiClient, logDebug, logInfo, logWarn, logError)
     );
   }
 
@@ -179,13 +176,7 @@ export async function handleExecute(
     rowLimit,
   };
 
-  return await executeSqlQuery(
-    sqlParams,
-    requestId,
-    apiClient,
-    logDebug,
-    logInfo,
-    logWarn,
-    logError
+  return await withProgress(server, 'Executing SQL query', () =>
+    executeSqlQuery(sqlParams, requestId, apiClient, logDebug, logInfo, logWarn, logError)
   );
 }

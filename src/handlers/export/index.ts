@@ -1,10 +1,12 @@
 import { CallToolRequest } from '@modelcontextprotocol/sdk/types.js';
+import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { MetabaseApiClient } from '../../api.js';
 import { ErrorCode, McpError } from '../../types/core.js';
 import {
   validateCardParameters,
   validatePositiveInteger,
   validateEnumValue,
+  withProgress,
 } from '../../utils/index.js';
 import { exportSqlQuery } from './exportQuery.js';
 import { exportCard } from './exportCard.js';
@@ -14,6 +16,7 @@ export async function handleExport(
   request: CallToolRequest,
   requestId: string,
   apiClient: MetabaseApiClient,
+  server: Server,
   logDebug: (message: string, data?: unknown) => void,
   logInfo: (message: string, data?: unknown) => void,
   logWarn: (message: string, data?: unknown, error?: Error) => void,
@@ -123,7 +126,9 @@ export async function handleExport(
       filename,
     };
 
-    return await exportCard(cardParams, requestId, apiClient, logDebug, logInfo, logWarn, logError);
+    return await withProgress(server, `Exporting card ${cardId} as ${format}`, () =>
+      exportCard(cardParams, requestId, apiClient, logDebug, logInfo, logWarn, logError)
+    );
   }
 
   // If exporting a SQL query
@@ -145,13 +150,7 @@ export async function handleExport(
     filename,
   };
 
-  return await exportSqlQuery(
-    sqlParams,
-    requestId,
-    apiClient,
-    logDebug,
-    logInfo,
-    logWarn,
-    logError
+  return await withProgress(server, `Exporting SQL query as ${format}`, () =>
+    exportSqlQuery(sqlParams, requestId, apiClient, logDebug, logInfo, logWarn, logError)
   );
 }

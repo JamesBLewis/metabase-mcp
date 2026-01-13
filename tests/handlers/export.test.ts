@@ -8,6 +8,7 @@ import { McpError } from '../../src/types/core.js';
 import {
   mockApiClient,
   mockLogger,
+  mockServer,
   resetAllMocks,
   createMockRequest,
   getLoggerFunctions,
@@ -72,7 +73,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -86,7 +87,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -100,7 +101,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -122,7 +123,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
     });
 
@@ -136,7 +137,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
     });
 
@@ -145,7 +146,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -162,7 +163,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -179,7 +180,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -196,7 +197,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -226,12 +227,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -263,12 +265,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -295,12 +298,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -334,12 +338,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -365,12 +370,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -391,7 +397,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -416,7 +422,7 @@ describe('handleExport (export command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -456,7 +462,7 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError
+        request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError
       );
 
       expect(result.content).toHaveLength(1);
@@ -488,12 +494,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -533,12 +540,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -584,7 +592,7 @@ describe('handleExport (export command)', () => {
       });
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow();
     });
   });
@@ -607,7 +615,7 @@ describe('handleExport (export command)', () => {
       });
 
       await expect(
-        handleExport(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExport(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow();
     });
 
@@ -631,12 +639,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -662,12 +671,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -690,12 +700,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -718,12 +729,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 
@@ -746,12 +758,13 @@ describe('handleExport (export command)', () => {
       });
 
       const result = await handleExport(
-        request, 
-        'test-request-id', 
-        mockApiClient as any, 
-        logDebug, 
-        logInfo, 
-        logWarn, 
+        request,
+        'test-request-id',
+        mockApiClient as any,
+        mockServer as any,
+        logDebug,
+        logInfo,
+        logWarn,
         logError
       );
 

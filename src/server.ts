@@ -34,6 +34,13 @@ export class MetabaseServer {
   private server: Server;
   private apiClient: MetabaseApiClient;
 
+  /**
+   * Get the underlying MCP Server instance for use with custom transports
+   */
+  public getServer(): Server {
+    return this.server;
+  }
+
   constructor() {
     this.server = new Server(
       {
@@ -533,6 +540,7 @@ export class MetabaseServer {
               request,
               requestId,
               this.apiClient,
+              this.server,
               this.logDebug.bind(this),
               this.logInfo.bind(this),
               this.logWarn.bind(this),
@@ -546,6 +554,7 @@ export class MetabaseServer {
               request,
               requestId,
               this.apiClient,
+              this.server,
               this.logDebug.bind(this),
               this.logInfo.bind(this),
               this.logWarn.bind(this),
@@ -608,6 +617,9 @@ export class MetabaseServer {
     });
   }
 
+  /**
+   * Run the server with stdio transport (default mode)
+   */
   async run() {
     try {
       this.logInfo('Starting Metabase MCP server');
@@ -618,5 +630,15 @@ export class MetabaseServer {
       this.logFatal('Failed to start Metabase MCP server', error);
       throw error;
     }
+  }
+
+  /**
+   * Initialize the server without connecting a transport
+   * Used when running with HTTP transport (transport is connected externally)
+   */
+  async initialize() {
+    this.logInfo('Initializing Metabase MCP server (HTTP mode)');
+    // Server is already set up in constructor, just log that we're ready
+    this.logInfo('Metabase MCP server initialized and ready for HTTP transport');
   }
 }

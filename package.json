@@ -1,11 +1,14 @@
 {
-  "name": "@jerichosequitin/metabase-mcp",
+  "name": "@nelo/metabase-mcp",
   "version": "1.1.4",
-  "description": "A high-performance MCP server for Metabase analytics integration with response optimization and robust error handling",
+  "description": "MCP server for Metabase with Google SSO authentication",
   "type": "module",
-  "author": {
-    "name": "Jericho Sequitin",
-    "url": "https://github.com/jerichosequitin"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nelo/metabase-mcp.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "bin": {
     "metabase-mcp": "./build/src/index.js"
@@ -42,11 +45,13 @@
     "@modelcontextprotocol/sdk": "^1.23.0",
     "@types/xlsx": "^0.0.35",
     "dotenv": "^16.3.1",
+    "express": "^4.21.0",
     "open": "^10.1.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
     "zod": "^3.25.0"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^20.17.22",
     "@vitest/coverage-v8": "^4.0.15",
     "concurrently": "^8.2.2",

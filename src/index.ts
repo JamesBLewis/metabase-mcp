@@ -10,6 +10,7 @@
 
 import { MetabaseServer } from './server.js';
 import { handleAuthCommand } from './commands/auth.js';
+import { config } from './config.js';
 
 // Global error handlers for uncaught exceptions
 process.on('uncaughtException', (error: Error) => {
@@ -38,6 +39,28 @@ process.on('unhandledRejection', (reason: unknown, _promise: Promise<unknown>) =
 });
 
 /**
+ * Start the server with HTTP transport
+ */
+async function startHttpMode(): Promise<void> {
+  // Dynamically import to avoid loading Express when using stdio
+  const { startHttpServer } = await import('./http/index.js');
+
+  const metabaseServer = new MetabaseServer();
+  await metabaseServer.initialize();
+
+  const mcpServer = metabaseServer.getServer();
+  await startHttpServer(mcpServer);
+}
+
+/**
+ * Start the server with stdio transport (default)
+ */
+async function startStdioMode(): Promise<void> {
+  const server = new MetabaseServer();
+  await server.run();
+}
+
+/**
  * Main function to handle CLI arguments or start the MCP server
  */
 async function main(): Promise<void> {
@@ -54,7 +77,7 @@ async function main(): Promise<void> {
     console.log('Metabase MCP Server');
     console.log('===================\n');
     console.log('Usage:');
-    console.log('  npx metabase-mcp              - Start the MCP server');
+    console.log('  npx metabase-mcp              - Start the MCP server (stdio mode)');
     console.log('  npx metabase-mcp auth <cmd>   - Authentication commands\n');
     console.log('Auth Commands:');
     console.log('  auth login   - Authenticate with Google SSO');
@@ -65,13 +88,20 @@ async function main(): Promise<void> {
     console.log('  METABASE_API_KEY              - API key authentication');
     console.log('  METABASE_USER_EMAIL           - Email for session auth');
     console.log('  METABASE_PASSWORD             - Password for session auth');
-    console.log('  METABASE_GOOGLE_CLIENT_ID     - Google OAuth Client ID (uses PKCE)');
+    console.log('  METABASE_GOOGLE_CLIENT_ID     - Google OAuth Client ID (uses PKCE)\n');
+    console.log('Transport Mode:');
+    console.log('  MCP_TRANSPORT                 - Transport mode: stdio (default) or http');
+    console.log('  MCP_HTTP_PORT                 - HTTP server port (default: 3100)');
+    console.log('  MCP_HTTP_HOST                 - HTTP server host (default: 127.0.0.1)');
     return;
   }
 
-  // Start the Metabase MCP Server
-  const server = new MetabaseServer();
-  await server.run();
+  // Start the server based on transport mode
+  if (config.MCP_TRANSPORT === 'http') {
+    await startHttpMode();
+  } else {
+    await startStdioMode();
+  }
 }
 
 // Run main function

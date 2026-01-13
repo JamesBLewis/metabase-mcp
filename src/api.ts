@@ -1,7 +1,8 @@
 import { config, AuthMethod, determineAuthMethod } from './config.js';
 import { ErrorCode, McpError, isMcpError } from './types/core.js';
 import { NetworkErrorFactory, createErrorFromHttpResponse } from './utils/errorFactory.js';
-import { tokenStore, getValidSession } from './auth/index.js';
+import { tokenStore, getValidSession, performLogin } from './auth/index.js';
+import { getActiveHttpSession, isHttpMode } from './auth/httpSessionStore.js';
 
 // Logger level enum
 enum LogLevel {
@@ -705,7 +706,17 @@ export class MetabaseApiClient {
         return this.sessionToken;
       }
 
-      // Try to get session from token store
+      // In HTTP mode, check the OAuth session store first
+      if (isHttpMode()) {
+        const httpSession = getActiveHttpSession();
+        if (httpSession) {
+          this.sessionToken = httpSession;
+          this.logInfo('Using HTTP OAuth session');
+          return this.sessionToken;
+        }
+      }
+
+      // Try to get session from file-based token store (stdio mode)
       this.logInfo('Checking for stored Google SSO session');
       try {
         const storedToken = await getValidSession();
@@ -718,15 +729,26 @@ export class MetabaseApiClient {
         this.logWarn('Failed to retrieve stored Google SSO session', undefined, error as Error);
       }
 
-      // No valid session found - user needs to authenticate
-      this.logError(
-        'No valid Google SSO session found',
-        new Error('Please run "npx metabase-mcp auth login" to authenticate with Google SSO')
-      );
-      throw new McpError(
-        ErrorCode.InternalError,
-        'No valid Google SSO session found. Please run "npx metabase-mcp auth login" to authenticate.'
-      );
+      // No valid session found
+      if (isHttpMode()) {
+        // HTTP mode - user needs to authenticate via OAuth flow
+        const errorMsg = 'No valid OAuth session found. Please authenticate via the MCP client.';
+        this.logError('No valid OAuth session found', new Error(errorMsg));
+        throw new McpError(ErrorCode.InternalError, errorMsg);
+      }
+
+      // Stdio mode - auto-trigger browser OAuth flow
+      this.logInfo('No valid session found, triggering browser authentication...');
+      try {
+        const auth = await performLogin();
+        this.sessionToken = auth.sessionToken;
+        this.logInfo('Browser authentication successful');
+        return this.sessionToken;
+      } catch (error) {
+        const errorMsg = `Authentication failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
+        this.logError('Browser authentication failed', new Error(errorMsg));
+        throw new McpError(ErrorCode.InternalError, errorMsg);
+      }
     }
 
     // For session auth, continue with existing logic

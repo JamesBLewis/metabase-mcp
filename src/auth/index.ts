@@ -12,3 +12,10 @@ export {
   refreshSession,
   getValidSession,
 } from './googleAuth.js';
+export {
+  setHttpSession,
+  getHttpSession,
+  getActiveHttpSession,
+  clearHttpSessions,
+  isHttpMode,
+} from './httpSessionStore.js';

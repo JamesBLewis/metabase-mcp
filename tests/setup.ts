@@ -9,6 +9,7 @@ process.env.METABASE_URL = 'https://test-metabase.example.com';
 process.env.METABASE_API_KEY = 'test-api-key';
 process.env.LOG_LEVEL = 'error'; // Reduce noise in tests
 process.env.NODE_ENV = 'test';
+process.env.MAX_RESPONSE_CHARS = '10000000'; // 10M chars - disable truncation in tests
 
 // Mock API client with all methods
 export const mockApiClient = {
@@ -61,6 +62,11 @@ export const mockLogger = {
   logWarn: vi.fn(),
   logError: vi.fn(),
   logFatal: vi.fn(),
+};
+
+// Mock MCP server for progress notifications
+export const mockServer = {
+  sendLoggingMessage: vi.fn(),
 };
 
 // Helper function to get logger functions as tuple
@@ -217,6 +223,11 @@ export function resetAllMocks() {
     }
   });
   Object.values(mockLogger).forEach(mock => {
+    if (vi.isMockFunction(mock)) {
+      mock.mockReset();
+    }
+  });
+  Object.values(mockServer).forEach(mock => {
     if (vi.isMockFunction(mock)) {
       mock.mockReset();
     }

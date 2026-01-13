@@ -797,8 +797,10 @@ describe('handleRetrieve', () => {
   });
 
   describe('Response size monitoring', () => {
-    it('should log warning for very large responses (>20k estimated tokens)', async () => {
+    it('should handle large responses (automatic truncation replaces warnings)', async () => {
       // Create a large card response that would generate many tokens
+      // Note: With automatic truncation, large responses are now truncated automatically
+      // rather than generating warnings. This test verifies the response is returned successfully.
       const largeCard = {
         ...sampleCard,
         description: 'A'.repeat(10000), // Large description to increase response size
@@ -820,18 +822,19 @@ describe('handleRetrieve', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       const request = createMockRequest('retrieve', { model: 'card', ids });
-      await handleRetrieve(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      const result = await handleRetrieve(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
 
-      expect(mockLogger.logWarn).toHaveBeenCalledWith(
-        expect.stringContaining('Large response detected'),
-        expect.objectContaining({
-          requestId: 'test-request-id',
-          responseSize: expect.any(Number),
-          estimatedTokens: expect.any(Number),
-          optimizationLevel: expect.any(String),
-          itemCount: 30
-        })
-      );
+      // Response should be returned successfully (may be truncated due to size limits)
+      expect(result.content).toHaveLength(1);
+      const responseData = JSON.parse(result.content[0].text);
+      // Results may be truncated if they exceed MAX_RESPONSE_CHARS
+      expect(responseData.results.length).toBeGreaterThan(0);
+      expect(responseData.results.length).toBeLessThanOrEqual(30);
+      // If truncation occurred, there should be truncation info
+      if (responseData.results.length < 30) {
+        expect(responseData._truncation_info).toBeDefined();
+        expect(responseData._truncation_info.was_truncated).toBe(true);
+      }
     });
 
     it('should log debug message for moderate responses (15k-20k estimated tokens)', async () => {

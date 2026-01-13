@@ -227,9 +227,72 @@ npx metabase-mcp auth login
 
 ---
 
+## HTTP Transport Mode with Native MCP OAuth
+
+For advanced use cases, the MCP server supports HTTP transport mode with native MCP OAuth 2.1 support. This allows MCP clients that support the MCP OAuth specification to authenticate directly without requiring the CLI-based login flow.
+
+### Enabling HTTP Mode
+
+```bash
+# Required
+export METABASE_URL=https://your-metabase-instance.com
+export METABASE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+
+# Enable HTTP transport
+export MCP_TRANSPORT=http
+export MCP_HTTP_PORT=3100  # Default
+export MCP_HTTP_HOST=127.0.0.1  # Default
+
+# Start the server
+npx metabase-mcp
+```
+
+### MCP OAuth Flow (HTTP Mode)
+
+When using HTTP transport, the authentication flow follows the MCP OAuth 2.1 specification:
+
+1. Client connects to `http://localhost:3100/mcp`
+2. Server returns `401 Unauthorized` with `WWW-Authenticate` header
+3. Client fetches `/.well-known/oauth-protected-resource` for metadata
+4. Metadata points to Google as the authorization server
+5. Client performs PKCE flow with Google
+6. Client sends Google access token as Bearer token to MCP server
+7. Server validates token and processes requests
+
+### Endpoints (HTTP Mode)
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check (no auth required) |
+| `/mcp` | POST | MCP requests (requires Bearer auth) |
+| `/mcp` | GET | SSE streaming (requires Bearer auth) |
+| `/.well-known/oauth-protected-resource` | GET | OAuth Protected Resource Metadata |
+
+### Configuration Reference
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MCP_TRANSPORT` | `stdio` | Transport mode: `stdio` or `http` |
+| `MCP_HTTP_PORT` | `3100` | HTTP server port (1024-65535) |
+| `MCP_HTTP_HOST` | `127.0.0.1` | HTTP server bind address |
+
+### When to Use HTTP Mode
+
+- MCP clients that support native MCP OAuth (not Claude Desktop as of this writing)
+- Web-based MCP integrations
+- Scenarios requiring SSE streaming for long-running operations
+
+### When to Use Stdio Mode (Default)
+
+- Claude Desktop and Claude Code
+- Standard MCP client integrations
+- Simpler deployment without additional port configuration
+
+---
+
 ## Current Limitations
 
-### Google SSO Limitations
+### Google SSO Limitations (Stdio Mode)
 
 1. **No UI Integration**: Claude Desktop doesn't currently support custom UI elements like a "Login with Google" button. Authentication must be done via CLI command before using the MCP server.
 
@@ -241,10 +304,17 @@ npx metabase-mcp auth login
 
 5. **Token Security**: While tokens are encrypted at rest, the encryption is primarily for obfuscation. For high-security requirements, API key authentication is recommended.
 
+### HTTP Mode Limitations
+
+1. **Server Must Be Running**: Unlike stdio mode, HTTP mode requires the MCP server to be running separately before connecting.
+
+2. **Client Support**: Not all MCP clients support HTTP transport with OAuth. Claude Code supports it natively.
+
 ### Future Improvements
 
 The following improvements are planned or under consideration:
 
+- [x] HTTP transport mode with native MCP OAuth support
 - [ ] System keychain integration for more secure token storage
 - [ ] Support for multiple Metabase instance profiles
 - [ ] MCP tool for triggering authentication from chat

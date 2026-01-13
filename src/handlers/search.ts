@@ -6,7 +6,7 @@ import {
   handleApiError,
   validatePositiveInteger,
   validateEnumValue,
-  formatJson,
+  formatJsonWithLimit,
 } from '../utils/index.js';
 
 export async function handleSearch(
@@ -338,20 +338,23 @@ export async function handleSearch(
       content: [
         {
           type: 'text',
-          text: formatJson({
-            search_metrics: {
-              method: searchMethod,
-              total_results: totalResults,
-              search_time_ms: searchTime,
-              parameters_used: usedParameters,
+          text: formatJsonWithLimit(
+            {
+              search_metrics: {
+                method: searchMethod,
+                total_results: totalResults,
+                search_time_ms: searchTime,
+                parameters_used: usedParameters,
+              },
+              recommended_actions: recommendedActions,
+              results_by_model: Object.keys(resultsByModel).map(model => ({
+                model,
+                count: resultsByModel[model].length,
+              })),
+              results: enhancedResults,
             },
-            recommended_actions: recommendedActions,
-            results_by_model: Object.keys(resultsByModel).map(model => ({
-              model,
-              count: resultsByModel[model].length,
-            })),
-            results: enhancedResults,
-          }),
+            { responseType: 'search', arrayField: 'results' }
+          ),
         },
       ],
     };

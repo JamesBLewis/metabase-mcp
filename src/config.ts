@@ -32,6 +32,10 @@ function expandSystemVariables(path: string | undefined): string {
 const DEFAULT_AUTH_STORE_PATH = join(homedir(), '.metabase-mcp', 'auth.json');
 const DEFAULT_OAUTH_CALLBACK_PORT = 9876;
 
+// HTTP server defaults
+const DEFAULT_HTTP_PORT = 3100;
+const DEFAULT_HTTP_HOST = '127.0.0.1';
+
 // Environment variable schema
 const envSchema = z
   .object({
@@ -39,7 +43,7 @@ const envSchema = z
     METABASE_API_KEY: z.string().optional(),
     METABASE_USER_EMAIL: z.string().email().optional(),
     METABASE_PASSWORD: z.string().min(1).optional(),
-    // Google SSO configuration (uses PKCE, no client secret needed)
+    // Google SSO configuration (uses implicit flow, no client secret needed)
     METABASE_GOOGLE_CLIENT_ID: z.string().optional(),
     METABASE_AUTH_STORE_PATH: z
       .string()
@@ -67,6 +71,19 @@ const envSchema = z
       .string()
       .default('true')
       .transform(val => val.toLowerCase() === 'true'),
+    MAX_RESPONSE_CHARS: z
+      .string()
+      .default('50000')
+      .transform(val => parseInt(val, 10))
+      .pipe(z.number().positive()), // ~12,500 tokens max per response
+    // HTTP server mode configuration
+    MCP_TRANSPORT: z.enum(['stdio', 'http']).default('stdio'),
+    MCP_HTTP_PORT: z
+      .string()
+      .default(String(DEFAULT_HTTP_PORT))
+      .transform(val => parseInt(val, 10))
+      .pipe(z.number().int().min(1024).max(65535)),
+    MCP_HTTP_HOST: z.string().default(DEFAULT_HTTP_HOST),
   })
   .refine(
     data =>
@@ -116,6 +133,10 @@ function validateEnvironment() {
         REQUEST_TIMEOUT_MS: 600000,
         EXPORT_DIRECTORY: join(homedir(), 'Downloads', 'Metabase'),
         METABASE_READ_ONLY_MODE: true,
+        MAX_RESPONSE_CHARS: 50000,
+        MCP_TRANSPORT: 'stdio' as const,
+        MCP_HTTP_PORT: DEFAULT_HTTP_PORT,
+        MCP_HTTP_HOST: DEFAULT_HTTP_HOST,
       };
     }
   }
@@ -147,6 +168,10 @@ function createTestConfig() {
     REQUEST_TIMEOUT_MS: 600000,
     EXPORT_DIRECTORY: join(homedir(), 'Downloads', 'Metabase'),
     METABASE_READ_ONLY_MODE: true,
+    MAX_RESPONSE_CHARS: 50000,
+    MCP_TRANSPORT: 'stdio' as const,
+    MCP_HTTP_PORT: DEFAULT_HTTP_PORT,
+    MCP_HTTP_HOST: DEFAULT_HTTP_HOST,
   };
 }
 

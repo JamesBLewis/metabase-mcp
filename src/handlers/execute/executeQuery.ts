@@ -3,7 +3,7 @@ import {
   handleApiError,
   validatePositiveInteger,
   validateMetabaseResponse,
-  formatJson,
+  formatJsonWithLimit,
 } from '../../utils/index.js';
 import { SqlExecutionParams, ExecutionResponse } from './types.js';
 import { optimizeExecuteData } from './optimizers.js';
@@ -153,13 +153,16 @@ export async function executeSqlQuery(
       content: [
         {
           type: 'text',
-          text: formatJson({
-            success: true,
-            database_id: databaseId,
-            row_count: rowCount,
-            applied_limit: finalLimit,
-            data: optimizedData,
-          }),
+          text: formatJsonWithLimit(
+            {
+              success: true,
+              database_id: databaseId,
+              row_count: rowCount,
+              applied_limit: finalLimit,
+              data: optimizedData,
+            },
+            { responseType: 'execute', arrayField: 'data' }
+          ),
         },
       ],
     };

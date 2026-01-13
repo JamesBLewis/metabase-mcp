@@ -9,7 +9,7 @@ import {
   validateEnumValue,
   parseAndValidatePositiveInteger,
   parseAndValidateNonNegativeInteger,
-  formatJson,
+  formatJsonWithLimit,
 } from '../../utils/index.js';
 import {
   MAX_IDS_PER_REQUEST,
@@ -408,34 +408,11 @@ export async function handleRetrieve(
 
     logInfo(logMessage);
 
-    // Monitor response size for token usage optimization feedback
-    const responseText = formatJson(response);
-    const responseSizeChars = responseText.length;
-    const estimatedTokens = Math.ceil(responseSizeChars / 4); // Rough estimation: ~4 chars per token
-
-    // Log warnings for large responses
-    if (estimatedTokens > 20000) {
-      logWarn(
-        `Large response detected: ~${estimatedTokens} tokens (${responseSizeChars} chars) for ${numericIds.length} ${validatedModel}(s). Consider using smaller batch sizes for better performance.`,
-        {
-          requestId,
-          responseSize: responseSizeChars,
-          estimatedTokens,
-          optimizationLevel,
-          itemCount: numericIds.length,
-        }
-      );
-    } else if (estimatedTokens > 15000) {
-      logDebug(
-        `Moderate response size: ~${estimatedTokens} tokens (${responseSizeChars} chars) for ${numericIds.length} ${validatedModel}(s)`,
-        {
-          requestId,
-          responseSize: responseSizeChars,
-          estimatedTokens,
-          optimizationLevel,
-        }
-      );
-    }
+    // Format response with automatic truncation if too large
+    const responseText = formatJsonWithLimit(response, {
+      responseType: 'retrieve',
+      arrayField: 'data',
+    });
 
     return {
       content: [

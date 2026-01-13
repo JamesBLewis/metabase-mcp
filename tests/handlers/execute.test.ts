@@ -9,6 +9,7 @@ import { McpError } from '../../src/types/core.js';
 import {
   mockApiClient,
   mockLogger,
+  mockServer,
   resetAllMocks,
   createMockRequest,
   getLoggerFunctions,
@@ -26,7 +27,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -40,7 +41,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -58,7 +59,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -82,7 +83,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -104,7 +105,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -118,7 +119,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -132,7 +133,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -146,7 +147,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -164,7 +165,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -182,7 +183,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -203,7 +204,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -228,7 +229,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -253,7 +254,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -303,7 +304,7 @@ describe('handleExecute (execute command)', () => {
       mockApiClient.request.mockResolvedValueOnce(mockResponse);
 
       const result = await handleExecute(
-        request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError
+        request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError
       );
 
       expect(result.content).toHaveLength(1);
@@ -328,7 +329,7 @@ describe('handleExecute (execute command)', () => {
       const [logDebug, logInfo, logWarn, logError] = getLoggerFunctions();
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       expect(mockLogger.logWarn).toHaveBeenCalledWith(
@@ -348,7 +349,7 @@ describe('handleExecute (execute command)', () => {
         query: 'SELECT * FROM users'
       });
 
-      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -378,7 +379,7 @@ describe('handleExecute (execute command)', () => {
         row_limit: 100
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -404,7 +405,7 @@ describe('handleExecute (execute command)', () => {
         row_limit: 100
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -430,7 +431,7 @@ describe('handleExecute (execute command)', () => {
         row_limit: 100
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -460,7 +461,7 @@ describe('handleExecute (execute command)', () => {
         native_parameters: nativeParameters
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -487,7 +488,7 @@ describe('handleExecute (execute command)', () => {
       });
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow();
     });
   });
@@ -515,7 +516,7 @@ describe('handleExecute (execute command)', () => {
         card_id: 123
       });
 
-      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/card/123/query/json', {
         method: 'POST',
@@ -551,7 +552,7 @@ describe('handleExecute (execute command)', () => {
         card_parameters: cardParameters
       });
 
-      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/card/123/query/json', {
         method: 'POST',
@@ -587,7 +588,7 @@ describe('handleExecute (execute command)', () => {
         row_limit: 100
       });
 
-      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       const responseData = JSON.parse(result.content[0].text);
       expect(responseData.row_count).toBe(100);
@@ -619,7 +620,7 @@ describe('handleExecute (execute command)', () => {
         row_limit: 10
       });
 
-      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      const result = await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       const responseData = JSON.parse(result.content[0].text);
       expect(responseData.row_count).toBe(10);
@@ -642,7 +643,7 @@ describe('handleExecute (execute command)', () => {
       });
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow();
     });
 
@@ -692,7 +693,7 @@ describe('handleExecute (execute command)', () => {
       });
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow(McpError);
 
       // Verify that parameter validation error was logged
@@ -755,7 +756,7 @@ describe('handleExecute (execute command)', () => {
       });
 
       await expect(
-        handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError)
+        handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError)
       ).rejects.toThrow();
 
       // Verify that parameter validation error was logged
@@ -773,7 +774,7 @@ describe('handleExecute (execute command)', () => {
         card_id: 123
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockLogger.logDebug).toHaveBeenCalledWith(
         'Executing card ID: 123 with row limit: 100'
@@ -794,7 +795,7 @@ describe('handleExecute (execute command)', () => {
         query: '  SELECT * FROM users  \n\n  '
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -819,7 +820,7 @@ describe('handleExecute (execute command)', () => {
         query: 'SELECT * FROM users;'
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -846,7 +847,7 @@ describe('handleExecute (execute command)', () => {
         query: 'SELECT * FROM users'
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockLogger.logDebug).toHaveBeenCalledWith(
         'Executing SQL query against database ID: 1 with row limit: 100'
@@ -862,7 +863,7 @@ describe('handleExecute (execute command)', () => {
         query: 'SELECT * FROM users'
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockLogger.logInfo).toHaveBeenCalledWith(
         expect.stringContaining('Successfully executed SQL query against database: 1')
@@ -880,7 +881,7 @@ describe('handleExecute (execute command)', () => {
         query: 'SELECT * FROM users'
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
@@ -905,7 +906,7 @@ describe('handleExecute (execute command)', () => {
         query: 'SELECT * FROM users'
       });
 
-      await handleExecute(request, 'test-request-id', mockApiClient as any, logDebug, logInfo, logWarn, logError);
+      await handleExecute(request, 'test-request-id', mockApiClient as any, mockServer as any, logDebug, logInfo, logWarn, logError);
 
       expect(mockApiClient.request).toHaveBeenCalledWith('/api/dataset', {
         method: 'POST',
