@@ -73,13 +73,9 @@
     "business-intelligence",
     "sql"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jerichosequitin/metabase-mcp.git"
-  },
-  "homepage": "https://github.com/jerichosequitin/metabase-mcp#readme",
+  "homepage": "https://github.com/nelo/metabase-mcp#readme",
   "bugs": {
-    "url": "https://github.com/jerichosequitin/metabase-mcp/issues"
+    "url": "https://github.com/nelo/metabase-mcp/issues"
   },
   "license": "MIT",
   "engines": {
