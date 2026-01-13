@@ -1,19 +1,8 @@
 # Metabase MCP
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/jerichosequitin/metabase-mcp)
-[![npm version](https://img.shields.io/npm/v/@jerichosequitin/metabase-mcp)](https://www.npmjs.com/package/@jerichosequitin/metabase-mcp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![GitHub stars](https://img.shields.io/github/stars/jerichosequitin/metabase-mcp)](https://github.com/jerichosequitin/metabase-mcp/stargazers)
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/jerichosequitin)
-
 A high-performance Model Context Protocol server for AI integration with Metabase analytics platforms. Features response optimization, robust error handling, and comprehensive data access tools.
 
-<a href="https://glama.ai/mcp/servers/@jerichosequitin/Metabase">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@jerichosequitin/Metabase/badge" />
-</a>
+**Note:** This is Nelo's private fork with built-in defaults for Nelo's Metabase instance. For the public version, see [jerichosequitin/metabase-mcp](https://github.com/jerichosequitin/metabase-mcp).
 
 ## Key Features
 
@@ -25,74 +14,54 @@ A high-performance Model Context Protocol server for AI integration with Metabas
 - **Large Data Export**: Export up to 1M rows in CSV, JSON, and XLSX formats
 - **Read-Only Mode**: Enabled by default to restrict execute to SELECT queries only
 
-## Installation
+## Installation for Nelo Users
 
-### Option 1: Claude Desktop
+### Quick Start (Zero Configuration)
 
-Install directly from the [Claude Desktop Directory](https://claude.ai/directory/ant.dir.gh.jerichosequitin.metabase), or:
+1. **First-time setup**: Authenticate with Google SSO
+   ```bash
+   npx @nelo/metabase-mcp auth login
+   ```
+   This opens your browser to sign in with your Nelo Google account.
 
-1. Download `metabase-mcp.mcpb` from [Releases](https://github.com/jerichosequitin/metabase-mcp/releases)
-2. Open the `.mcpb` file with Claude Desktop to install
-3. Configure your Metabase credentials in Claude Desktop's extension settings
+2. **Add to Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+   ```jsonc
+   {
+     "mcpServers": {
+       "metabase-mcp": {
+         "command": "npx",
+         "args": ["-y", "@nelo/metabase-mcp"]
+       }
+     }
+   }
+   ```
 
-### Option 2: Manual Configuration
+That's it - no environment variables needed. The package has built-in defaults for Nelo's Metabase instance.
 
-Add the following to your MCP client configuration:
+### Optional Configuration
+
+Override defaults if needed:
 
 ```jsonc
 {
   "mcpServers": {
     "metabase-mcp": {
       "command": "npx",
-      "args": ["-y", "@jerichosequitin/metabase-mcp"],
+      "args": ["-y", "@nelo/metabase-mcp"],
       "env": {
-        // Required
-        "METABASE_URL": "https://your-metabase-instance.com",
+        // Override Nelo defaults
+        "METABASE_URL": "https://different-instance.com",
+        "METABASE_GOOGLE_CLIENT_ID": "different-client-id",
 
-        // Authentication (choose one)
-        "METABASE_API_KEY": "your_api_key_here",       // API key (recommended)
-        "METABASE_USER_EMAIL": "",                     // OR email/password
-        "METABASE_PASSWORD": "",
-
-        // Optional (defaults shown)
-        "EXPORT_DIRECTORY": "~/Downloads/Metabase",    // Export location
-        "METABASE_READ_ONLY_MODE": "true",             // Restrict to SELECT queries
-        "LOG_LEVEL": "info",                           // debug, info, warn, error, fatal (debug enables pretty JSON)
-        "CACHE_TTL_MS": "600000",                      // 10 minutes
-        "REQUEST_TIMEOUT_MS": "600000"                 // 10 minutes
+        // Other options (defaults shown)
+        "EXPORT_DIRECTORY": "~/Downloads/Metabase",
+        "METABASE_READ_ONLY_MODE": "true",
+        "LOG_LEVEL": "info"
       }
     }
   }
 }
 ```
-
-### Option 3: Docker
-
-For containerized deployments without installing Node.js. Add to your MCP client configuration:
-
-```jsonc
-{
-  "mcpServers": {
-    "metabase-mcp": {
-      "command": "docker",
-      "args": [
-        "run", "-i", "--rm", "--init",
-        "-e", "METABASE_URL=https://your-metabase-instance.com",
-        "-e", "METABASE_API_KEY=your_api_key",
-        // Optional: mount volume for exports
-        // "-v", "~/Downloads/Metabase:/home/node/exports",
-        "ghcr.io/jerichosequitin/metabase-mcp:latest"
-      ]
-    }
-  }
-}
-```
-
-Or build locally: `docker build -t metabase-mcp .` and use `metabase-mcp` as the image name.
-
-**Required flags:** `-i` (interactive, for MCP stdio), `--rm` (cleanup), `--init` (signal handling)
-
-**Environment variables:** Pass via `-e` flags. See [Manual Configuration](#option-2-manual-configuration) for all options. Docker defaults: `LOG_LEVEL=info`, `METABASE_READ_ONLY_MODE=true`, `EXPORT_DIRECTORY=/home/node/exports`.
 
 ## Available Tools
 
@@ -129,19 +98,16 @@ Export large datasets up to 1M rows to the configured export directory.
 Clear internal cache with granular control.
 - **Targets**: Individual model caches, list caches, or bulk operations (`all`, `all-lists`, `all-individual`)
 
-## Google SSO Authentication
+## Authentication
 
-For Metabase instances using Google SSO, configure the following:
-
+For Nelo users, just run:
 ```bash
-METABASE_URL=https://your-metabase-instance.com
-METABASE_GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-
-# Then authenticate via CLI (one-time):
-npx metabase-mcp auth login
+npx @nelo/metabase-mcp auth login
 ```
 
-See [docs/auth.md](docs/auth.md) for detailed Google SSO setup instructions.
+This opens your browser to sign in with Google SSO. Your session is stored locally at `~/.metabase-mcp/auth.json`.
+
+See [docs/auth.md](docs/auth.md) for detailed authentication options including API key and email/password methods.
 
 ## HTTP Transport Mode (Advanced)
 
@@ -168,7 +134,7 @@ See [docs/auth.md](docs/auth.md#http-transport-mode-with-native-mcp-oauth) for d
 ### Setup
 
 ```bash
-git clone https://github.com/jerichosequitin/metabase-mcp.git
+git clone https://github.com/nelo/metabase-mcp.git
 cd metabase-mcp
 npm install
 npm run build

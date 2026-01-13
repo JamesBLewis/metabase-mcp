@@ -2,6 +2,24 @@
 
 This document covers all authentication methods supported by the Metabase MCP server, including the new Google SSO support.
 
+## Nelo Users (Zero Configuration)
+
+For Nelo employees, this package works out of the box with no environment variables needed:
+
+```bash
+# Just run it - defaults are pre-configured for Nelo's Metabase instance
+npx @nelo/metabase-mcp auth login   # First time only - opens browser for Google SSO
+npx @nelo/metabase-mcp              # Start the server
+```
+
+The package has built-in defaults:
+- `METABASE_URL` = `https://metabase.nelointernal.com`
+- `METABASE_GOOGLE_CLIENT_ID` = Nelo's Google OAuth client ID
+
+You only need to configure environment variables if you want to connect to a different Metabase instance or use a different authentication method.
+
+---
+
 ## Authentication Methods Overview
 
 The MCP server supports three authentication methods:

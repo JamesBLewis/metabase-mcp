@@ -36,15 +36,20 @@ const DEFAULT_OAUTH_CALLBACK_PORT = 9876;
 const DEFAULT_HTTP_PORT = 3100;
 const DEFAULT_HTTP_HOST = '127.0.0.1';
 
+// Nelo defaults (private package)
+const DEFAULT_METABASE_URL = 'https://metabase.nelointernal.com';
+const DEFAULT_GOOGLE_CLIENT_ID =
+  '981271240699-tda5iuh3tp0pbrib9v995aoji5g0tjvk.apps.googleusercontent.com';
+
 // Environment variable schema
 const envSchema = z
   .object({
-    METABASE_URL: z.string().url('METABASE_URL must be a valid URL'),
+    METABASE_URL: z.string().url('METABASE_URL must be a valid URL').default(DEFAULT_METABASE_URL),
     METABASE_API_KEY: z.string().optional(),
     METABASE_USER_EMAIL: z.string().email().optional(),
     METABASE_PASSWORD: z.string().min(1).optional(),
     // Google SSO configuration (uses implicit flow, no client secret needed)
-    METABASE_GOOGLE_CLIENT_ID: z.string().optional(),
+    METABASE_GOOGLE_CLIENT_ID: z.string().default(DEFAULT_GOOGLE_CLIENT_ID),
     METABASE_AUTH_STORE_PATH: z
       .string()
       .default(DEFAULT_AUTH_STORE_PATH)
@@ -107,24 +112,16 @@ function isCliOnlyMode(): boolean {
 function validateEnvironment() {
   // For CLI-only commands, use relaxed validation with defaults
   if (isCliOnlyMode()) {
-    const cliEnv = {
-      ...process.env,
-      // Provide defaults for CLI mode to avoid validation errors
-      METABASE_URL: process.env.METABASE_URL || 'http://localhost:3000',
-      // Use a placeholder for Google Client ID if not set (allows auth status to work)
-      METABASE_GOOGLE_CLIENT_ID:
-        process.env.METABASE_GOOGLE_CLIENT_ID || '__cli_mode_placeholder__',
-    };
     try {
-      return envSchema.parse(cliEnv);
+      return envSchema.parse(process.env);
     } catch {
       // If validation still fails in CLI mode, return minimal defaults
       return {
-        METABASE_URL: cliEnv.METABASE_URL,
+        METABASE_URL: DEFAULT_METABASE_URL,
         METABASE_API_KEY: process.env.METABASE_API_KEY,
         METABASE_USER_EMAIL: process.env.METABASE_USER_EMAIL,
         METABASE_PASSWORD: process.env.METABASE_PASSWORD,
-        METABASE_GOOGLE_CLIENT_ID: process.env.METABASE_GOOGLE_CLIENT_ID,
+        METABASE_GOOGLE_CLIENT_ID: DEFAULT_GOOGLE_CLIENT_ID,
         METABASE_AUTH_STORE_PATH: DEFAULT_AUTH_STORE_PATH,
         METABASE_OAUTH_CALLBACK_PORT: DEFAULT_OAUTH_CALLBACK_PORT,
         NODE_ENV: 'development' as const,
